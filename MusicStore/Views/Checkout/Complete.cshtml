@@ -1,0 +1,50 @@
+﻿@model MusicStore.Models.Order
+
+@{
+    ViewData["Title"] = "Details";
+}
+<h1>Checkout Completed</h1>
+
+<h4>Confirmation</h4>
+<hr />
+<p>
+    Thanks for you order! Your order number is: @Html.DisplayNameFor(model => model.OrderID)
+</p>
+<p>
+    How about shopping for some more music in our <a asp-controller="Home" asp-action="Index">Music Store</a>
+</p>
+<hr />
+
+<div>
+    <h4>More details about your Order</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Username)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Username)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Address)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Address)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.OrderDate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.OrderDate)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-controller="Home" asp-action="Index">Back to Home</a>
+</div>

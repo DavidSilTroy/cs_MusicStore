@@ -9,37 +9,25 @@ using Microsoft.EntityFrameworkCore;
 using MusicStore.Data;
 using MusicStore.Models;
 
-namespace MusicStore.Areas.Admin.Controllers
+namespace MusicStore.Controllers
 {
-    [Area("Admin")]
-    [Authorize(Roles = "Administrator")]
-    public class ArtistsController : Controller
+    [Authorize]
+    public class CheckoutController : Controller
     {
         private readonly StoreContext _context;
 
-        public ArtistsController(StoreContext context)
+        public CheckoutController(StoreContext context)
         {
             _context = context;
         }
 
-        // GET: Admin/Artists
-        public async Task<IActionResult> Index(string? letter)
+        // GET: Checkout
+        public async Task<IActionResult> Index()
         {
-            String[] alphabet = {"All", "A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
-            ViewData["alphabetToSort"] = alphabet;
-            if (letter == null || letter == "All") { 
-                var artists = await _context.Artists.ToListAsync();
-                return View(artists);
-            }
-            else
-            {
-                 var artists = await _context.Artists.Where(a => a.Name.StartsWith(letter)).ToListAsync();
-                return View(artists);
-            }
-
+            return View(await _context.Orders.ToListAsync());
         }
 
-        // GET: Admin/Artists/Details/5
+        // GET: Checkout/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -47,39 +35,65 @@ namespace MusicStore.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var artist = await _context.Artists
-                .FirstOrDefaultAsync(m => m.ArtistID == id);
-            if (artist == null)
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(m => m.OrderID == id);
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return View(artist);
+            return View(order);
+        }
+        public async Task<IActionResult> Complete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(m => m.OrderID == id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
         }
 
-        // GET: Admin/Artists/Create
+        // GET: Checkout/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Admin/Artists/Create
+        // POST: Checkout/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ArtistID,Name")] Artist artist)
+        public async Task<IActionResult> Create([Bind("OrderID,Username,Name,Address,OrderDate")] Order order)
         {
             if (ModelState.IsValid)
-            {
-                _context.Add(artist);
+            { 
+
+                order.Username = HttpContext.User.Identity.Name;
+                order.OrderDate = DateTime.Now;
+
+                _context.Add(order);
+                _context.SaveChanges();
+
+                var cart = new ShoppingCart(HttpContext, _context);
+                cart.CreateOrderItems(order);
+
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Complete", new { id = order.OrderID });
+
             }
-            return View(artist);
+            return View(order);
         }
 
-        // GET: Admin/Artists/Edit/5
+        // GET: Checkout/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -87,22 +101,22 @@ namespace MusicStore.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var artist = await _context.Artists.FindAsync(id);
-            if (artist == null)
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null)
             {
                 return NotFound();
             }
-            return View(artist);
+            return View(order);
         }
 
-        // POST: Admin/Artists/Edit/5
+        // POST: Checkout/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ArtistID,Name")] Artist artist)
+        public async Task<IActionResult> Edit(int id, [Bind("OrderID,Username,Name,Address,OrderDate")] Order order)
         {
-            if (id != artist.ArtistID)
+            if (id != order.OrderID)
             {
                 return NotFound();
             }
@@ -111,12 +125,12 @@ namespace MusicStore.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(artist);
+                    _context.Update(order);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!ArtistExists(artist.ArtistID))
+                    if (!OrderExists(order.OrderID))
                     {
                         return NotFound();
                     }
@@ -127,10 +141,10 @@ namespace MusicStore.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(artist);
+            return View(order);
         }
 
-        // GET: Admin/Artists/Delete/5
+        // GET: Checkout/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -138,30 +152,30 @@ namespace MusicStore.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var artist = await _context.Artists
-                .FirstOrDefaultAsync(m => m.ArtistID == id);
-            if (artist == null)
+            var order = await _context.Orders
+                .FirstOrDefaultAsync(m => m.OrderID == id);
+            if (order == null)
             {
                 return NotFound();
             }
 
-            return View(artist);
+            return View(order);
         }
 
-        // POST: Admin/Artists/Delete/5
+        // POST: Checkout/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var artist = await _context.Artists.FindAsync(id);
-            _context.Artists.Remove(artist);
+            var order = await _context.Orders.FindAsync(id);
+            _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ArtistExists(int id)
+        private bool OrderExists(int id)
         {
-            return _context.Artists.Any(e => e.ArtistID == id);
+            return _context.Orders.Any(e => e.OrderID == id);
         }
     }
 }
