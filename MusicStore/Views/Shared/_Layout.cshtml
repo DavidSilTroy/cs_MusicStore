@@ -21,9 +21,7 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Store" asp-action="ListGenres">Genres</a>
-                        </li>
+                        @await Component.InvokeAsync("GenreMenu")
                         @await Component.InvokeAsync("CartSummary")
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="Admin" asp-controller="Albums" asp-action="">Admin</a>
