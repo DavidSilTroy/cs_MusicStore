@@ -4,11 +4,29 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Index Artists</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<p>
+    Hola
+    @foreach (var item in ViewBag.alphabetToSort)
+    { 
+        <span>
+        <a 
+            asp-area="Admin"
+            asp-controller="Artists" 
+            asp-action="Index"
+            asp-route-letter="@item">
+                @item
+        </a> |
+        </span>
+    }
+</p>
+
+
 <table class="table">
     <thead>
         <tr>

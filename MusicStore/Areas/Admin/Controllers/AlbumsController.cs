@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +11,6 @@ using MusicStore.Models;
 namespace MusicStore.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    [Authorize(Roles = "Administrator")]
     public class AlbumsController : Controller
     {
         private readonly StoreContext _context;
@@ -25,7 +23,10 @@ namespace MusicStore.Areas.Admin.Controllers
         // GET: Admin/Albums
         public async Task<IActionResult> Index()
         {
+            var album = new Album();
             var storeContext = _context.Albums.Include(a => a.Artist).Include(a => a.Genre);
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "Name", album.ArtistID);
+            ViewData["GenreID"] = new SelectList(_context.Genres, "GenreID", "Name", album.GenreID);
             return View(await storeContext.ToListAsync());
         }
 
@@ -52,8 +53,10 @@ namespace MusicStore.Areas.Admin.Controllers
         // GET: Admin/Albums/Create
         public IActionResult Create()
         {
-            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistID");
-            ViewData["GenreID"] = new SelectList(_context.Genres, "GenreID", "GenreID");
+            var album = new Album(); 
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "Name", album.ArtistID);
+            ViewData["GenreID"] = new SelectList(_context.Genres, "GenreID", "Name", album.GenreID);
+
             return View();
         }
 
@@ -70,8 +73,8 @@ namespace MusicStore.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistID", album.ArtistID);
-            ViewData["GenreID"] = new SelectList(_context.Genres, "GenreID", "GenreID", album.GenreID);
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "Name", album.ArtistID);
+            ViewData["GenreID"] = new SelectList(_context.Genres, "GenreID", "Name", album.GenreID);
             return View(album);
         }
 
@@ -88,8 +91,8 @@ namespace MusicStore.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "ArtistID", album.ArtistID);
-            ViewData["GenreID"] = new SelectList(_context.Genres, "GenreID", "GenreID", album.GenreID);
+            ViewData["ArtistID"] = new SelectList(_context.Artists, "ArtistID", "Name", album.ArtistID);
+            ViewData["GenreID"] = new SelectList(_context.Genres, "GenreID", "Name", album.GenreID);
             return View(album);
         }
 

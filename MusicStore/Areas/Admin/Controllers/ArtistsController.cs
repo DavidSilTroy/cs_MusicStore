@@ -21,9 +21,20 @@ namespace MusicStore.Areas.Admin.Controllers
         }
 
         // GET: Admin/Artists
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? letter)
         {
-            return View(await _context.Artists.ToListAsync());
+            String[] alphabet = {"All", "A", "B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"};
+            ViewData["alphabetToSort"] = alphabet;
+            if (letter == null || letter == "All") { 
+                var artists = await _context.Artists.ToListAsync();
+                return View(artists);
+            }
+            else
+            {
+                 var artists = await _context.Artists.Where(a => a.Name.StartsWith(letter)).ToListAsync();
+                return View(artists);
+            }
+
         }
 
         // GET: Admin/Artists/Details/5
