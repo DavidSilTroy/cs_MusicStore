@@ -36,7 +36,9 @@
     </dl>
 </div>
 <div> 
-    <a asp-controller="Home" asp-action="Index">Add to cart</a>
+    <a asp-controller="ShoppingCart" asp-action="AddToCart" asp-route-id="@Model.AlbumID">
+        Add to cart
+        </a>
     <br/>
-    <a asp-controller="Home" asp-action="Index">Back to List</a>
+    <a asp-controller="Home" asp-action="Index">Back to Home</a>
 </div>

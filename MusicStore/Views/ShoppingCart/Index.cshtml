@@ -1,0 +1,75 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@ 
+
+@model List<CartItem>
+@{
+    ViewData["Title"] = "List Genres";
+}
+
+<h1>Shopping Cart</h1>
+<h3>Review your albums</h3>
+ 
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model[0].Album)
+            </th> 
+            <th>
+                @Html.DisplayNameFor(model => model[0].Album.Price)
+            </th> 
+            <th>
+                @Html.DisplayNameFor(model => model[0].Count)
+            </th> 
+            <th>
+                Price
+            </th> 
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var total = 0;
+        }
+        @foreach (var item in Model) {
+        <tr>
+            <td> 
+                <a 
+                    asp-controller="Store"
+                    asp-action="Details" 
+                    asp-route-id="@item.AlbumID">
+                        @Html.DisplayFor(modelItem => item.Album.Title)
+                </a>
+            </td>
+            <td> 
+                @Html.DisplayFor(modelItem => item.Album.Price) euro
+            </td>
+            <td> 
+                @Html.DisplayFor(modelItem => item.Count)
+            </td>
+            <td> 
+                    @{
+                        var totalItem = item.Count * item.Album.Price;
+                        total = total + totalItem;
+                    }
+                    @totalItem euro
+            </td> 
+            <td>
+                <a asp-action="RemoveOneFromCart" asp-route-id="@item.CartItemID">-</a> |
+                <a asp-action="AddToCart" asp-route-id="@item.AlbumID">+</a> |
+                <a asp-action="RemoveFromCart" asp-route-id="@item.CartItemID">Remove from cart</a>
+            </td>
+        </tr>
+}
+    <tr>
+        <th>Total</th>
+        <th></th>
+        <th></th>
+        <th>@total euro</th>
+        <th></th>
+    </tr>
+    </tbody>
+</table>
+<br />
+<a asp-controller="Home" asp-action="Index">Back to Home</a>

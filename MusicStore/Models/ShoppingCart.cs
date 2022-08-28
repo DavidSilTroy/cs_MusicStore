@@ -57,6 +57,36 @@ namespace MusicStore.Models
             }
             _context.SaveChanges();
         }
+        public void RemoveFromCart(int? id)
+        {
+            // Get the matching cart and album instances
+            var cartItem = _context.CartItems.SingleOrDefault(
+                c => c.CartKey == _cartKey
+                && c.CartItemID == id);
+
+            if (cartItem != null)
+            {
+                _context.CartItems.Remove(cartItem);
+            } 
+            _context.SaveChanges();
+        }
+        public void RemoveOneFromCart(int? id)
+        {
+            // Get the matching cart and album instances
+            var cartItem = _context.CartItems.SingleOrDefault(
+                c => c.CartKey == _cartKey
+                && c.CartItemID == id);
+
+            if(cartItem.Count >1) {
+                cartItem.Count--;
+                _context.SaveChanges();
+            }
+            else
+            {
+                RemoveFromCart(id);
+            }
+
+        }
 
         public void EmptyCart()
         {

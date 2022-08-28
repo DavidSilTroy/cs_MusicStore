@@ -11,7 +11,7 @@ namespace MusicStore.Controllers
     {
         private readonly StoreContext _context;
 
-        public int Albums { get; private set; }
+        //public int Albums { get; private set; }
 
         public StoreController(StoreContext context)
         {
@@ -48,7 +48,8 @@ namespace MusicStore.Controllers
             }
 
             return View(album);
-        }public async Task<IActionResult> ListAlbums(int? id)
+        }
+        public async Task<IActionResult> ListAlbums(int? id)
         {
             if (id == null)
             {

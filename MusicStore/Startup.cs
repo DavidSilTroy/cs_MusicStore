@@ -46,6 +46,10 @@ namespace MusicStore
                 .AddDefaultUI()
                 .AddDefaultTokenProviders()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            //To use the sessions
+            services.AddDistributedMemoryCache();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -70,6 +74,9 @@ namespace MusicStore
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            //To use the sessions
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
